@@ -6,6 +6,8 @@ file_to_output = "Analysis/Revenue_txt"
 total_months = 0
 total_revenue = 0
 previous_revenue = 0
+month_of_change = []
+revenue_change_list = []
 #* The average of the changes in "Profit/Losses" over the entire period
 average_change = []
 # Greatest Increase in Profits: Feb-2012 ($1926159)
@@ -21,8 +23,9 @@ with open(file_to_load) as financial_data:
         total_revenue = int(row["Profit/Losses"])
 # Revenue Change
         revenue_change = int(row["Profit/Losses"]) - previous_revenue
-        previous_revenu = int(row["Profit/Losses"]) 
-        average_change = average_change + [row['Date']]
+        previous_revenue = int(row["Profit/Losses"]) 
+        revenue_change_list = revenue_change_list+[revenue_change]
+        month_of_change = month_of_change + [row['Date']]
 # Greatest Increase
         if revenue_change > greatest_increase[1]:
             greatest_increase[0] = row["Date"]
@@ -33,9 +36,18 @@ with open(file_to_load) as financial_data:
             greatest_decrease[1] = revenue_change
 
 # revenue_avg
-
+revenue_avg = sum(revenue_change_list)/len(revenue_change_list)
 output = (
-    f'Total Months: {total_months}'
+    '\nFinancial Analysis\n' +
+    '-----------------------------\n'+
+    'Total Months: {}\n'.format(total_months) +
+    'Total Revenue: {}\n'.format(total_revenue) +
+    'Average Revenue Change: {}\n'.format(revenue_avg) +
+    'Greatest Increase in Revenue: {} $({})\n'.format(greatest_increase[0],greatest_increase[1]) +
+    'Greatest Decrease in Revenue: {} $({})\n'.format(greatest_decrease[0],greatest_decrease[1])
 )
 
 print(output)
+
+with open (file_to_output, 'w') as txt_file:
+    txt_file.write(output)
